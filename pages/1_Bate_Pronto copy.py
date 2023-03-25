@@ -1,9 +1,7 @@
 import streamlit as st
-#import toml
+import toml
 import openai
-#import tiktoken
-import modules.count_token as ct
-import modules.api_secret as sec
+import tiktoken
 
 st.title("Bate Pronto")
 st.header("Perguntas e Respostas")
@@ -28,19 +26,17 @@ st.sidebar.info(
 list = ['text-davinci-002','text-davinci-003']
 model_engine = st.sidebar.selectbox("Escolha o módulo que deseja usar", list)
 
-openai.api_key  = sec.get_me_secret()
+# Set your OpenAI API key
+with open("secrets.toml", "r") as f:
+    config = toml.load(f)
 
-# # Set your OpenAI API key
-# with open("secrets.toml", "r") as f:
-#     config = toml.load(f)
+openai.api_key = config["OPENAI_KEY"]
 
-# openai.api_key = config["OPENAI_KEY"]
+if 'key' not in st.session_state:
+    st.session_state['key'] = openai.api_key
 
-# if 'key' not in st.session_state:
-#     st.session_state['key'] = openai.api_key
-
-# if openai.api_key == "OPENAI_KEY":
-#     openai.api_key = st.sidebar.text_input("API Key", st.session_state['key'] , type="password")
+if openai.api_key == "OPENAI_KEY":
+    openai.api_key = st.sidebar.text_input("API Key", st.session_state['key'] , type="password")
 
 
 
@@ -51,7 +47,6 @@ def main():
     '''    
     # Create a selectbox to allow the user to choose an AI module
     # Get user input
-    #openai.api_key  = sec.get_me_secret()
     user_query = st.text_input("Como posso ajudar?", "")
     # user_query = st.text_input("Enter query here, to exit enter :q", "what is Python?")
     if user_query == ":q" or user_query == "":
@@ -59,7 +54,7 @@ def main():
         
     [valid,response] = ChatGPT(user_query)
     if valid:
-        count = ct.count_token(response)
+        count = count_token(response)
         return st.write(f"{user_query} {response} \nTokens: {count}")
     
     
@@ -92,13 +87,13 @@ def ChatGPT(user_query):
         return [False, e.args[0]]
         #return errnum
 
-# def count_token(string:str, encoding_name = "cl100k_base"):
-#     """
-#     Retorna número de tokens em uma string.
-#     """
-#     encoding = tiktoken.get_encoding(encoding_name)
-#     num_tokens = len(encoding.encode(string))
-#     return num_tokens
+def count_token(string:str, encoding_name = "cl100k_base"):
+    """
+    Retorna número de tokens em uma string.
+    """
+    encoding = tiktoken.get_encoding(encoding_name)
+    num_tokens = len(encoding.encode(string))
+    return num_tokens
     
 if __name__ == "__main__":
     main()

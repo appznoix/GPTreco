@@ -32,6 +32,9 @@ BASE_PROMPT = [{"role": "system", "content": "You are a helpful assistant."}]
 if "messages" not in st.session_state:
     st.session_state["messages"] = BASE_PROMPT
 
+
+
+
 st.header("Bate papo com GPT-3 CHATBOT")
 
 text = st.empty()
