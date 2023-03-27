@@ -13,8 +13,7 @@ def set_api_secret_session(secret):
 
 def input_api_secret(secret):
     if(secret == "OPENAI_KEY" or secret == "")  :        
-        return st.sidebar.write("API Key não informado")
-        #return st.sidebar.text_input("API Key", get_api_secret_section() , type="password")
+        return st.sidebar.text_input("API Key", get_api_secret_section() , type="password")
     
     return secret
     

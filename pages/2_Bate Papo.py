@@ -1,9 +1,8 @@
 import openai
-import toml
-#import tiktoken
+#import toml
 import streamlit as st
-
 import modules.count_token as ct
+import modules.api_secret as sec
 
 # def count_token(string:str, encoding_name = "gpt-3.5-turbo"):
 #     """Returna numero de tokens em uma string."""
@@ -23,10 +22,14 @@ def show_messages(text):
     #text.text_area("Messages", value=str("\n".join(messages_str))+"\n"+count_token(messages_str), height=400)
     #text.text_area("Messages", value=str("\n".join(messages_str)), height=400)
 
+openai.api_key  = sec.get_me_secret()
+'''
 with open("secrets.toml", "r") as f:
     config = toml.load(f)
 
 openai.api_key = config["OPENAI_KEY"]
+'''
+
 BASE_PROMPT = [{"role": "system", "content": "You are a helpful assistant."}]
 
 if "messages" not in st.session_state:
