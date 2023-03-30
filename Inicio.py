@@ -1,17 +1,15 @@
 import streamlit as st
+import modules.api_secret as sec
 
 def main():
     """Exemplos de acesso ao api openai"""
     st.title("GPTreco")
-    st.subheader("Para facilitar o teste e medição")
-    st.warning("secrets.toml armazena suas credencias. Fique atento")
-
-    #if st.button("Signup"):
-    #    st.success("You have successfully created a valid Account")   
-
-    #st.info("Go to Login Menu to login")
-    st.write("Batepronto - perguntas e respostas")
-    st.write("Chat - Conversa contínua")
+    st.subheader("Exemplos de acesso ao API do chatGPT com contagem de tokens")
+    secret = sec.get_me_secret()
+    if secret in ['','OPENAI_KEY']:    
+        st.warning("Armazene suas credencias openai em secrets.toml. Fique atento")
+    st.write("Bate Pronto - Pergunta e resposta")
+    st.write("Bate Papo - Conversa contínua")
 
 if __name__ == '__main__':
 	main()

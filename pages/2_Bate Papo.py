@@ -1,15 +1,7 @@
 import openai
-#import toml
 import streamlit as st
 import modules.count_token as ct
 import modules.api_secret as sec
-
-# def count_token(string:str, encoding_name = "gpt-3.5-turbo"):
-#     """Returna numero de tokens em uma string."""
-#     encoding = tiktoken.encoding_for_model(encoding_name)
-#     #    encoding = tiktoken.get_encoding(encoding_name)
-#     num_tokens = len(encoding.encode(string))
-#     return num_tokens
     
 def show_messages(text):
     messages_str = [
@@ -17,25 +9,30 @@ def show_messages(text):
     ]
     msg =str("\n".join(messages_str))
     count = ct.count_token(msg)
-    tokens = "" if count == 0 else "\nTokens: " + str(count)
-    text.text_area("Messages", value=msg + tokens, height=400)    
-    #text.text_area("Messages", value=str("\n".join(messages_str))+"\n"+count_token(messages_str), height=400)
-    #text.text_area("Messages", value=str("\n".join(messages_str)), height=400)
+    tokens = "" if count == 0 else str(count)
+    text.text_area("Mensagens", value=msg, height=400)    
+    if count > 0 :
+        st.write("Tokens: ", tokens)
 
 openai.api_key  = sec.get_me_secret()
-'''
-with open("secrets.toml", "r") as f:
-    config = toml.load(f)
-
-openai.api_key = config["OPENAI_KEY"]
-'''
 
 BASE_PROMPT = [{"role": "system", "content": "You are a helpful assistant."}]
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = BASE_PROMPT
 
-st.header("Bate papo com GPT-3 CHATBOT")
+st.title("Bate Papo")
+st.header("Conversa contínua com ChatGPT Turbo")
+st.write("Exemplo de consulta ao api ChatCompletion da Openai")
+
+st.sidebar.header("Instruções")
+st.sidebar.info(
+    """Esta aplicação permite que você interaja com
+       uma implementação simples do API ChatCompletion da OpenAI. O mesmo do modelo ChatGPT. Veja quantos tokens são emitidos.
+       Insira uma **consulta** na **caixa de texto** e **pressione enter** para receber
+       uma **resposta** do ChatGPT.
+    """
+    )
 
 text = st.empty()
 show_messages(text)
@@ -44,15 +41,19 @@ prompt = st.text_input(
     "Do que você quer falar?", value="", placeholder="Entre com as informações aqui...",
 )
 
-if st.button("Enviar"):
+if prompt:
     with st.spinner("Gerando respostas..."):
         st.session_state["messages"] += [{"role": "user", "content": prompt}]
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", messages=st.session_state["messages"]
+            model="gpt-3.5-turbo", 
+            messages=st.session_state["messages"]
         )
         message_response = response["choices"][0]["message"]["content"]
         st.session_state["messages"] += [
-            {"role": "system", "content": message_response}
+            {
+                "role": "system", 
+                "content": message_response
+            }
         ]
         show_messages(text)
 

@@ -4,36 +4,31 @@ import modules.count_token as ct
 import modules.api_secret as sec
 
 st.title("Bate Pronto")
-st.header("Perguntas e Respostas")
-# st.sidebar.header("Instructions")
-# st.sidebar.info(
-#     '''This is a web application that allows you to interact with 
-#        the OpenAI API's implementation of the ChatGPT model.
-#        Enter a **query** in the **text box** and **press enter** to receive 
-#        a **response** from the ChatGPT. You can also choose the module below
-#        '''
-#     )
+st.header("Pergunta e Resposta")
+st.write("Exemplo de consulta simples ao api Completion openai")
+
 st.sidebar.header("Instruções")
 st.sidebar.info(
-    '''Esta aplicação web permite que você interaja com
-       a implementação da API OpenAI do modelo ChatGPT e ver quantos tokens são emitidos
+    """Esta aplicação permite que você interaja com
+       uma implementação simples do API OpenAI do modelo ChatGPT e veja quantos tokens são emitidos
        Insira uma **consulta** na **caixa de texto** e **pressione enter** para receber
        uma **resposta** do ChatGPT. Você também pode escolher o módulo abaixo
-       '''
+    """
     )
 
 # Set the model engine 
 list = ['text-davinci-002','text-davinci-003']
 model_engine = st.sidebar.selectbox("Escolha o módulo que deseja usar", list)
-
 openai.api_key  = sec.get_me_secret()
-
 def main():
     '''
     This function gets the user input, pass it to ChatGPT function and 
     displays the response    
     '''    
     # Create a selectbox to allow the user to choose an AI module
+    if(openai.api_key == '' or openai.api_key== 'OPENAI_KEY'):
+        return st.warning("Pegue o Openai API Key: [https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys) e salve-o no arquivo /secrets.toml")
+    
     user_query = st.text_input("Como posso ajudar?", "")
     if user_query == ":q" or user_query == "":
         return st.warning("Aguardando sua pergunta!")

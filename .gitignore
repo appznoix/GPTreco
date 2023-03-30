@@ -1,1 +1,5 @@
 /secrets copy.toml
+/modules/api_secret copy.py
+/modules/__pycache__
+/trash
+/ysecrets.toml
